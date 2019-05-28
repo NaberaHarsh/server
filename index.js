@@ -1,23 +1,20 @@
 const express=require("express");
-const bodyParser=require("body-parser")
-const logger=require("morgan")
+const bodyParser=require("body-parser");
+const loger=require("morgan");
 const session=require("express-session")
 
-const server= express();
 
-server.use(bodyParser.json())
-server.use(bodyParser.urlencoded())
-server.use(logger('dev'))
+const server= express();
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded());
+server.use(loger('tiny'));
+
 server.use(session({
     secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }   // make secure : true incase you are using HTTPS
-  }))
-
-server.post("/user1",(req,res)=>{
-    res.json(req.body)
-})
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
 
 server.get('/user', function(req, res) {
     if (req.session.views) {
