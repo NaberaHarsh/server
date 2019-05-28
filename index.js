@@ -1,20 +1,49 @@
-const express= require("express");
+const express=require("express");
+const bodyParser=require("body-parser")
+const logger=require("morgan")
+const session=require("express-session")
 
 const server= express();
 
-console.log("Hello");
+server.use(bodyParser.json())
+server.use(bodyParser.urlencoded())
+server.use(logger('dev'))
+server.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }   // make secure : true incase you are using HTTPS
+  }))
 
-server.get("/login", (req,res)=>{
-console.log(req.query);
-res.send(req.query)
+server.post("/user1",(req,res)=>{
+    res.json(req.body)
 })
 
-server.get("/demo/:name/:subject", (req,res)=>{
-    console.log(req.params);
-    res.json(req.params)
-    })
+server.get('/user', function(req, res) {
+    if (req.session.views) {
+      req.session.views++
+      res.json({views:req.session.views})
+    } else {
+      req.session.views = 1
+      res.send('welcome to the session demo. refresh!')
+    }
+  })
 
+
+server.get("/login",(req,res)=>{
+    console.log(req.query)
+    res.json(req.query);
+})
+server.get("/demo/:name/:age/:city",(req,res)=>{
+    console.log(req.params);
+    console.log(req.query);
+    res.json(req.params);
+    res.json(req.query);
+})
+
+server.use(express.static('public'));
 
 server.listen(8080,()=>{
-    console.log("started server");
-});
+    console.log("server started")
+})
+ 
